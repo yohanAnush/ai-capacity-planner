@@ -5,13 +5,9 @@ from application.regressor import BayesianPolynomialRegressor
 import application.constants as const
 from application.response_formatter import formatter, json_value_validator
 
-from application.load_model import load_model, get_model
+from application.load_model import get_model
 
 ai_capacity_planner = Flask(__name__)
-
-# Load Model
-model = load_model();
-
 
 @ai_capacity_planner.route('/')
 def check():
