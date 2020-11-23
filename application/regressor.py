@@ -4,12 +4,14 @@ import pandas as pd
 import application.constants as const
 import pymc3 as pm
 from application.response_formatter import formatter
+from application.load_model import get_model
 
 seed = 42
 np.random.seed(42)
 
 class BayesianPolynomialRegressor:
-    def __init__(self, model):
+    def __init__(self):
+        model = get_model()
         self.poly_model = model["model"]
         self.trace = model["trace"]
         self.x_shared = model["x_shared"]
@@ -86,3 +88,4 @@ class BayesianPolynomialRegressor:
         else:
             predictions = self.predict(sample_count=sample_count)
             return max(predictions)
+

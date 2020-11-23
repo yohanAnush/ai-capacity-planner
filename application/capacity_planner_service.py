@@ -1,3 +1,7 @@
+import sys
+import gc
+from os.path import dirname
+sys.path.append(dirname("."))
 from flask import Flask
 from flask import request, jsonify, Response
 from application.regressor import BayesianPolynomialRegressor
@@ -5,7 +9,6 @@ from application.regressor import BayesianPolynomialRegressor
 import application.constants as const
 from application.response_formatter import formatter, json_value_validator
 
-from application.load_model import get_model
 
 ai_capacity_planner = Flask(__name__)
 
@@ -16,7 +19,7 @@ def check():
 @ai_capacity_planner.route('/predict_point', methods=['POST'])
 def point_prediction():
     if request.method == "POST":
-        poly_regressor = BayesianPolynomialRegressor(get_model())
+        poly_regressor = BayesianPolynomialRegressor()
         data = request.get_json()
 
         method = const.DEFAULT_METHOD
@@ -50,7 +53,7 @@ def point_prediction():
         try:
             prediction = poly_regressor.predict_point([scenario, concurrency, message_size], method=method, sample_count=sample_count);
             tps,latency = formatter(tps=prediction, concurrency=concurrency);
-
+            print("Result Returned")
             return jsonify(
                 tps=tps,
                 latency=latency
@@ -63,10 +66,9 @@ def point_prediction():
 @ai_capacity_planner.route('/max_tps', methods=['POST'])
 def max_tps_prediction():
     if request.method == "POST":
-        poly_regressor = BayesianPolynomialRegressor(get_model())
+        poly_regressor = BayesianPolynomialRegressor()
         data = request.get_json()
 
-        method = const.DEFAULT_METHOD
         method = const.DEFAULT_METHOD
         sample_count = const.DEFAULT_SAMPLE_COUNT
 
@@ -107,6 +109,5 @@ def max_tps_prediction():
             print("Error")
             return Response(status=const.HTTP_422_UNPROCESSABLE_ENTITY)
 
-
 if __name__ == '__main__':
-    ai_capacity_planner.run(threaded=True)
+    ai_capacity_planner.run(threaded=True, host='0.0.0.0')

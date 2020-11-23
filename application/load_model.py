@@ -3,7 +3,8 @@ import application.constants as const
 from copy import deepcopy
 
 def load_model():
-    print("Loading Model")
+    print("Load Model")
+
     with open(const.model_path, 'rb') as buff:
         data = pickle.load(buff)
         return {
@@ -15,6 +16,7 @@ def load_model():
             "encoder": data['encoder'],
             "gp": data['gp'],
         }
+
 
 model = load_model();
 
